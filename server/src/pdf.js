@@ -1,6 +1,5 @@
 import fs from "fs";
 import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
 
 let browserPromise = null;
 
@@ -9,6 +8,12 @@ const SANDBOX_ARGS = ["--no-sandbox", "--disable-setuid-sandbox"];
 const MAC_CHROME_PATHS = [
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   "/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+];
+
+const LINUX_CHROME_PATHS = [
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
+  "/usr/bin/google-chrome",
 ];
 
 async function launchBrowser() {
@@ -34,13 +39,22 @@ async function launchBrowser() {
     }
   }
 
-  console.log("PDF: using @sparticuz/chromium (Render/Linux)");
-  return puppeteer.launch({
-    args: [...chromium.args, ...SANDBOX_ARGS],
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-  });
+  if (process.platform === "linux") {
+    for (const executablePath of LINUX_CHROME_PATHS) {
+      if (fs.existsSync(executablePath)) {
+        console.log("PDF: using Chromium at", executablePath);
+        return puppeteer.launch({
+          headless: true,
+          executablePath,
+          args: SANDBOX_ARGS,
+        });
+      }
+    }
+  }
+
+  throw new Error(
+    "No Chrome/Chromium found. On Render, deploy with Docker (see Dockerfile)."
+  );
 }
 
 async function getBrowser() {
@@ -57,7 +71,7 @@ export async function htmlToPdf(html) {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
