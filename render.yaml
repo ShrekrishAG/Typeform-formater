@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: typeform-formatter
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    healthCheckPath: /health
+    envVars:
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: HR_EMAIL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: FORM_TITLE
+        sync: false
+      - key: COMPANY_NAME
+        sync: false
