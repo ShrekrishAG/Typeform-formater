@@ -18,6 +18,6 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
-app.listen(port, () => {
-  console.log(`PDF service listening on http://localhost:${port}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`PDF service listening on port ${port}`);
 });

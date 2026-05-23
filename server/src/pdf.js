@@ -1,9 +1,10 @@
 import fs from "fs";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 
 let browserPromise = null;
 
-const LAUNCH_ARGS = ["--no-sandbox", "--disable-setuid-sandbox"];
+const SANDBOX_ARGS = ["--no-sandbox", "--disable-setuid-sandbox"];
 
 const MAC_CHROME_PATHS = [
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -11,12 +12,12 @@ const MAC_CHROME_PATHS = [
 ];
 
 async function launchBrowser() {
-  const base = { headless: true, args: LAUNCH_ARGS };
-
   if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    console.log("PDF: using PUPPETEER_EXECUTABLE_PATH");
     return puppeteer.launch({
-      ...base,
+      headless: true,
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      args: SANDBOX_ARGS,
     });
   }
 
@@ -24,19 +25,22 @@ async function launchBrowser() {
     for (const executablePath of MAC_CHROME_PATHS) {
       if (fs.existsSync(executablePath)) {
         console.log("PDF: using Chrome at", executablePath);
-        return puppeteer.launch({ ...base, executablePath });
+        return puppeteer.launch({
+          headless: true,
+          executablePath,
+          args: SANDBOX_ARGS,
+        });
       }
-    }
-    try {
-      console.log("PDF: using system Chrome (channel: chrome)");
-      return puppeteer.launch({ ...base, channel: "chrome" });
-    } catch {
-      // fall through to bundled Chromium
     }
   }
 
-  console.log("PDF: using Puppeteer bundled Chromium");
-  return puppeteer.launch(base);
+  console.log("PDF: using @sparticuz/chromium (Render/Linux)");
+  return puppeteer.launch({
+    args: [...chromium.args, ...SANDBOX_ARGS],
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
 }
 
 async function getBrowser() {

@@ -5,16 +5,16 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "browsers:install": "npx puppeteer browsers install chrome"
+    "dev": "node --watch src/index.js"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^133.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "puppeteer": "^24.8.2",
+    "puppeteer-core": "^24.8.2",
     "resend": "^4.5.1"
   }
 }

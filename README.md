@@ -74,6 +74,8 @@ HR should receive an email with a PDF. Fix any Resend/domain errors before deplo
 
 ---
 
+> **Full deploy + Apps Script checklist:** see [DEPLOY.md](DEPLOY.md)
+
 ## Step 3 — Deploy the server (Render)
 
 1. Push this repo to GitHub (or connect Render to your folder).

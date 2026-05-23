@@ -27,8 +27,8 @@ git push -u origin main
 
 1. Go to [dashboard.render.com](https://dashboard.render.com) → **New** → **Blueprint** (or **Web Service**).
 2. Connect your GitHub repo.
-3. If using **Blueprint**, Render reads `render.yaml` (Docker + health check).
-4. If manual: **Environment** = Docker, **Root directory** = `server`, use the `Dockerfile` there.
+3. If using **Blueprint**, Render reads `render.yaml` (Node + health check).
+4. If manual: **Language** = Node, **Root directory** = `server`, **Build** = `npm install`, **Start** = `npm start`.
 
 ### 3. Set environment variables on Render
 
