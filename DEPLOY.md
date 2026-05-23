@@ -30,6 +30,13 @@ git push -u origin main
 3. If using **Blueprint**, Render reads `render.yaml` (Node + health check).
 4. If manual: **Language** = Node, **Root directory** = `server`, **Build** = `npm install`, **Start** = `npm start`.
 
+**If you see `failed to read dockerfile: open Dockerfile: no such file`**
+
+Your service is set to **Docker** but was missing the file. Either:
+
+- **Redeploy** after pulling latest `main` (a root `Dockerfile` is included), **or**
+- **Settings** → set **Language** to **Node** (not Docker), **Root directory** `server`, **Build** `npm install`, **Start** `npm start` → Save → Manual Deploy.
+
 ### 3. Set environment variables on Render
 
 In the service → **Environment**, add the same values as your local `server/.env`:
